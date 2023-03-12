@@ -16,4 +16,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Protobuf Include="Protos\performance.proto" />
+  </ItemGroup>
+
 </Project>
