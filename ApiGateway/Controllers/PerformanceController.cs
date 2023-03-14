@@ -82,5 +82,24 @@ namespace ApiGateway.Controllers {
 
             return response;
         }
+
+        [HttpGet("streaming-call/{count}")]
+        public async Task<ResponseModel> GetPerformanceFromStreamingCall(int count) {
+            var stopWatch = Stopwatch.StartNew();
+
+            var response = new ResponseModel();
+
+            var clientNames = new List<string>();
+
+            for (var i = 0; i < count; i++) {
+                clientNames.Add($"client {i + 1}");
+            }
+
+            response.PerformanceStatuses.AddRange(await clientWrapper.GetPerformanceStatuses(clientNames));
+
+            response.RequestProcessingTime = stopWatch.ElapsedMilliseconds;
+
+            return response;
+        }
     }
 }
