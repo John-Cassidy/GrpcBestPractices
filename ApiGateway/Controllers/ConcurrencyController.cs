@@ -42,6 +42,9 @@ namespace ApiGateway.Controllers {
         public ResponseModel GetDataFromMultipleConnections(int count) {
             using var channel = GrpcChannel.ForAddress(serverUrl, new GrpcChannelOptions {
                 HttpHandler = new SocketsHttpHandler {
+                    PooledConnectionIdleTimeout = System.Threading.Timeout.InfiniteTimeSpan,
+                    KeepAlivePingDelay = TimeSpan.FromSeconds(60),
+                    KeepAlivePingTimeout = TimeSpan.FromSeconds(30),
                     EnableMultipleHttp2Connections = true,
                 }
             });
