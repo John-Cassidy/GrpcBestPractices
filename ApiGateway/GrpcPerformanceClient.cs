@@ -1,6 +1,7 @@
 ﻿using Grpc.Core;
 using Grpc.Net.Client;
 using Performance;
+using System.Runtime.InteropServices;
 using Monitor = Performance.Monitor;
 
 namespace ApiGateway {
@@ -23,12 +24,7 @@ namespace ApiGateway {
                 ClientName = clientName
             });
 
-            return new ResponseModel.PerformanceStatusModel {
-                CpuPercentageUsage = response.CpuPercentageUsage,
-                MemoryUsage = response.MemoryUsage,
-                ProcessesRunning = response.ProcessesRunning,
-                ActiveConnections = response.ActiveConnections
-            };
+            return ReadResponse(response);
         }
 
         public async Task<IEnumerable<ResponseModel.PerformanceStatusModel>> GetPerformanceStatuses(IEnumerable<string> clientNames) {
@@ -40,12 +36,7 @@ namespace ApiGateway {
 
             var readTask = Task.Run(async () => {
                 await foreach (var response in call.ResponseStream.ReadAllAsync()) {
-                    responses.Add(new ResponseModel.PerformanceStatusModel {
-                        CpuPercentageUsage = response.CpuPercentageUsage,
-                        MemoryUsage = response.MemoryUsage,
-                        ProcessesRunning = response.ProcessesRunning,
-                        ActiveConnections = response.ActiveConnections
-                    });
+                    responses.Add(ReadResponse(response));
                 }
             });
 
@@ -59,6 +50,17 @@ namespace ApiGateway {
             await readTask;
 
             return responses;
+        }
+
+        private ResponseModel.PerformanceStatusModel ReadResponse(PerformanceStatusResponse response) {
+            return new ResponseModel.PerformanceStatusModel {
+                CpuPercentageUsage = response.CpuPercentageUsage,
+                MemoryUsage = response.MemoryUsage,
+                ProcessesRunning = response.ProcessesRunning,
+                ActiveConnections = response.ActiveConnections,
+                DataLoad1 = response.DataLoad1.ToByteArray(),
+                DataLoad2 = MemoryMarshal.TryGetArray(response.DataLoad2.Memory, out var segment) ? segment.Array : response.DataLoad2.Memory.ToArray()
+            };
         }
 
         public void Dispose() {
