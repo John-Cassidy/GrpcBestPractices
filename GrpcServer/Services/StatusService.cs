@@ -19,9 +19,8 @@ namespace GrpcServer {
                 NumberOfConnections = randomNumberGenerator.Next(),
                 CpuUsage = randomNumberGenerator.NextDouble() * 100,
                 MemoryUsage = randomNumberGenerator.NextDouble() * 100,
-                ErrorsLogged = (ulong)randomNumberGenerator.Next(),
                 CatastrophicFailuresLogged = (uint)randomNumberGenerator.Next(),
-                Active = true
+                Busy = true
             });
         }
     }

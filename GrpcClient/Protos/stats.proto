@@ -9,7 +9,6 @@ service Status {
 message StatusRequest {
   string client_name = 1;
   string client_description = 2;
-  bool ready = 3;
   bool authorized = 4;
 }
 
