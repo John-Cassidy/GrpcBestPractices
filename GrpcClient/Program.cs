@@ -14,7 +14,7 @@ var clientDescription = Console.ReadLine();
 var response = await client.GetStatusAsync(new Stats.StatusRequest {
     ClientName = clientName,
     ClientDescription = clientDescription,
-    Authorized = true
+    Allowed = true
 });
 
 Console.WriteLine($"Server name: {response.ServerName}");
