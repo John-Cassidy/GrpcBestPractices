@@ -15,12 +15,10 @@ namespace GrpcServer {
 
             return Task.FromResult(new StatusResponse {
                 ServerName = "TestServer",
-                ServerDescription = "This is a test server that is used for generating status metrics",
                 NumberOfConnections = randomNumberGenerator.Next(),
                 CpuUsage = randomNumberGenerator.NextDouble() * 100,
                 MemoryUsage = randomNumberGenerator.NextDouble() * 100,
-                CatastrophicFailuresLogged = (uint)randomNumberGenerator.Next(),
-                Busy = true
+                CatastrophicFailuresLogged = (uint)randomNumberGenerator.Next()
             });
         }
     }

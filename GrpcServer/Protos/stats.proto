@@ -14,11 +14,11 @@ message StatusRequest {
 }
 
 message StatusResponse {
-  string server_name = 1;
-  string server_description = 2;
+  string server_name = 1;  
   int32 number_of_connections = 3;
   double cpu_usage = 4;
   double memory_usage = 5;
   uint32 catastrophic_failures_logged = 7;
-  bool busy = 9;
+  reserved 6,8 to 9;
+  reserved "server_description";
 }
