@@ -36,5 +36,16 @@ namespace ApiGateway.Controllers {
             return response;
         }
 
+        [HttpPost("dns-load-balancer/{count}")]
+        public async Task<ApiResponse> PostDataViaDnsLoadBalancer(int count) {
+            var stopwatch = Stopwatch.StartNew();
+            var dataItemsProcessed = await _grpcClientWrapper.SendDataViaDnsLoadBalancer(count);
+            stopwatch.Stop();
+            var response = new ApiResponse {
+                DataItemsProcessed = dataItemsProcessed,
+                RequestProcessingTime = stopwatch.ElapsedMilliseconds
+            };
+            return response;
+        }
     }
 }

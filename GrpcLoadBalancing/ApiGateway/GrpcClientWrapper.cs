@@ -1,31 +1,41 @@
 ﻿using DataProcessor;
+using Grpc.Core;
 using Grpc.Net.Client;
+using Grpc.Net.Client.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ApiGateway {
     public interface IGrpcClientWrapper {
         Task<int> SendDataViaStandardClient(int requestCount);
         Task<int> SendDataViaLoadBalancer(int requestCount);
+        Task<int> SendDataViaDnsLoadBalancer(int requestCount);
     }
 
     public class GrpcClientWrapper : IGrpcClientWrapper, IDisposable {
     
-        private int currentChannelIndex = 0;
-        private readonly GrpcChannel standardChannel;
-        private readonly List<GrpcChannel> roundRobinChannels;
+        private int _currentChannelIndex = 0;
+        private readonly GrpcChannel _standardChannel;
+        private readonly List<GrpcChannel> _roundRobinChannels;
+        private readonly IServiceProvider _serviceProvider;
 
-        public GrpcClientWrapper(List<string> addresses) {
-            roundRobinChannels = new List<GrpcChannel>();
-            standardChannel = GrpcChannel.ForAddress(addresses[0]);
+        // create constructor that takes IConfiguration and IServiceProvider as parameters
+        // use IConfiguration to get the list of addresses from the appsettings.json file
+        public GrpcClientWrapper(IConfiguration configuration, IServiceProvider serviceProvider) {
+            _serviceProvider = serviceProvider;
+            _roundRobinChannels = new List<GrpcChannel>();
+
+            var addresses = configuration.GetSection("ServerAddresses").Get<List<string>>();            
+            _standardChannel = GrpcChannel.ForAddress(addresses[0]);
 
             foreach (var address in addresses) {
-                roundRobinChannels.Add(GrpcChannel.ForAddress(address));
+                _roundRobinChannels.Add(GrpcChannel.ForAddress(address));
             }
-        }        
+        }      
 
         public async Task<int> SendDataViaLoadBalancer(int requestCount) {
             var count = 0;
             for (var i = 0; i < requestCount; i++) {
-                var client = new Ingestor.IngestorClient(roundRobinChannels[GetCurrentChannelIndex()]);
+                var client = new Ingestor.IngestorClient(_roundRobinChannels[GetCurrentChannelIndex()]);
                 await client.ProcessDataAsync(GenerateDataRequest(i));
                 count++;
             }
@@ -35,7 +45,26 @@ namespace ApiGateway {
         public async Task<int> SendDataViaStandardClient(int requestCount) {
             var count = 0;
             for (var i = 0; i < requestCount; i++) {
-                var client = new Ingestor.IngestorClient(standardChannel);
+                var client = new Ingestor.IngestorClient(_standardChannel);
+                await client.ProcessDataAsync(GenerateDataRequest(i));
+                count++;
+            }
+            return count;
+        }
+
+        public async Task<int> SendDataViaDnsLoadBalancer(int requestCount) {
+
+            using var channel = GrpcChannel.ForAddress(address: "dns:///myhost:7028", channelOptions: new GrpcChannelOptions {
+                Credentials = ChannelCredentials.SecureSsl,
+                ServiceConfig = new ServiceConfig { LoadBalancingConfigs = { new PickFirstConfig() } },
+                ServiceProvider = _serviceProvider
+
+            });
+
+            var client = new Ingestor.IngestorClient(channel);
+
+            var count = 0;
+            for (var i = 0; i < requestCount; i++) {
                 await client.ProcessDataAsync(GenerateDataRequest(i));
                 count++;
             }
@@ -43,20 +72,20 @@ namespace ApiGateway {
         }
 
         public void Dispose() {
-            standardChannel.Dispose();
-            foreach (var channel in roundRobinChannels) {
+            _standardChannel.Dispose();
+            foreach (var channel in _roundRobinChannels) {
                 channel.Dispose();
             }
         }
 
         private int GetCurrentChannelIndex() {
-            if (currentChannelIndex == roundRobinChannels.Count - 1) {
-                currentChannelIndex = 0;
+            if (_currentChannelIndex == _roundRobinChannels.Count - 1) {
+                _currentChannelIndex = 0;
             } else {
-                currentChannelIndex++;
+                _currentChannelIndex++;
             }
 
-            return currentChannelIndex;
+            return _currentChannelIndex;
         }
 
         private DataRequest GenerateDataRequest(int i) {
