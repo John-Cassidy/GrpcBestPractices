@@ -47,5 +47,17 @@ namespace ApiGateway.Controllers {
             };
             return response;
         }
+
+        [HttpPost("static-load-balancer/{count}")]
+        public async Task<ApiResponse> PostDataViaStaticLoadBalancer(int count) {
+            var stopwatch = Stopwatch.StartNew();
+            var dataItemsProcessed = await _grpcClientWrapper.SendDataViaStaticLoadBalancer(count);
+            stopwatch.Stop();
+            var response = new ApiResponse {
+                DataItemsProcessed = dataItemsProcessed,
+                RequestProcessingTime = stopwatch.ElapsedMilliseconds
+            };
+            return response;
+        }
     }
 }

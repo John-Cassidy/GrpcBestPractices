@@ -3,12 +3,14 @@ using Grpc.Core;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace ApiGateway {
     public interface IGrpcClientWrapper {
         Task<int> SendDataViaStandardClient(int requestCount);
         Task<int> SendDataViaLoadBalancer(int requestCount);
         Task<int> SendDataViaDnsLoadBalancer(int requestCount);
+        Task<int> SendDataViaStaticLoadBalancer(int requestCount);
     }
 
     public class GrpcClientWrapper : IGrpcClientWrapper, IDisposable {
@@ -94,6 +96,25 @@ namespace ApiGateway {
                 Name = $"Object {i}",
                 Description = $"This is object with the index of {i}",
             };
+        }
+
+        public async Task<int> SendDataViaStaticLoadBalancer(int requestCount) {
+            using var channel = GrpcChannel.ForAddress("static://localhost", new GrpcChannelOptions {
+                Credentials = ChannelCredentials.SecureSsl,
+                ServiceProvider = _serviceProvider,
+                ServiceConfig = new ServiceConfig { LoadBalancingConfigs = { new RoundRobinConfig() } }
+            });
+
+            var client = new Ingestor.IngestorClient(channel);
+
+            var count = 0;
+            for (var i = 0; i < requestCount; i++) {
+                await client.ProcessDataAsync(GenerateDataRequest(i));
+                count++;
+            }
+
+            return count;
+
         }
     }
 }
