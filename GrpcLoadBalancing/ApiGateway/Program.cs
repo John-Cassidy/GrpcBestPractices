@@ -19,6 +19,8 @@ var addresses = builder.Configuration.GetSection("ServerAddresses").Get<List<str
 // add the DNS resolver StaticResolverFactory
 //builder.Services.AddSingleton<ResolverFactory>(new StaticResolverFactory(addr => addresses.Select(a => new DnsEndPoint(a.Replace("//", string.Empty).Split(':')[1], int.Parse(a.Split(':')[2]))).ToArray()));
 builder.Services.AddSingleton<ResolverFactory>(new StaticResolverFactory(addr => addresses.Select(a => new BalancerAddress(a.Replace("//", string.Empty).Split(':')[1], int.Parse(a.Split(':')[2]))).ToArray()));
+builder.Services.AddSingleton<ResolverFactory, DiskResolverFactory>();
+builder.Services.AddSingleton<LoadBalancerFactory, RandomizedBalancerFactory>();
 
 var app = builder.Build();
 

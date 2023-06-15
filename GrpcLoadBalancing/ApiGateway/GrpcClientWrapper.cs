@@ -11,6 +11,7 @@ namespace ApiGateway {
         Task<int> SendDataViaLoadBalancer(int requestCount);
         Task<int> SendDataViaDnsLoadBalancer(int requestCount);
         Task<int> SendDataViaStaticLoadBalancer(int requestCount);
+        Task<int> SendDataViaCustomLoadBalancer(int requestCount);
     }
 
     public class GrpcClientWrapper : IGrpcClientWrapper, IDisposable {
@@ -115,6 +116,23 @@ namespace ApiGateway {
 
             return count;
 
+        }
+
+        public async Task<int> SendDataViaCustomLoadBalancer(int requestCount) {
+            using var channel = GrpcChannel.ForAddress("disk://addresses.txt", new GrpcChannelOptions {
+                Credentials = ChannelCredentials.SecureSsl,
+                ServiceProvider = _serviceProvider,
+                ServiceConfig = new ServiceConfig { LoadBalancingConfigs = { new LoadBalancingConfig("randomized") } }
+            });
+            var client = new Ingestor.IngestorClient(channel);
+
+            var count = 0;
+            for (var i = 0; i < requestCount; i++) {
+                await client.ProcessDataAsync(GenerateDataRequest(i));
+                count++;
+            }
+
+            return count;
         }
     }
 }
