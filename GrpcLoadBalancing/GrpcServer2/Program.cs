@@ -8,7 +8,6 @@ var app = builder.Build();
 
 app.UseRouting();
 
-// add useendpoints
-app.UseEndpoints(endpoints => endpoints.MapGrpcService<IngestorService>());
+app.MapGrpcService<IngestorService>();
 
 app.Run();

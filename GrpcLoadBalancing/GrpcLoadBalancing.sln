@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrpcServer2", "GrpcServer2\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway", "ApiGateway\ApiGateway.csproj", "{C9842B4E-C2FC-4D1A-8017-6A84298AFE79}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Http2Proxy", "Http2Proxy\Http2Proxy.csproj", "{3317E41D-ED01-420D-930C-A322A2166DAB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{C9842B4E-C2FC-4D1A-8017-6A84298AFE79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9842B4E-C2FC-4D1A-8017-6A84298AFE79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9842B4E-C2FC-4D1A-8017-6A84298AFE79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3317E41D-ED01-420D-930C-A322A2166DAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3317E41D-ED01-420D-930C-A322A2166DAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3317E41D-ED01-420D-930C-A322A2166DAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3317E41D-ED01-420D-930C-A322A2166DAB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
