@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrpcDependencies", "GrpcDep
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceManagerService", "DeviceManagerService\DeviceManagerService.csproj", "{188F2ECB-D2B2-4597-B1EA-5007340C278F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway", "ApiGateway\ApiGateway.csproj", "{53517CEB-6717-4D82-A08E-8508FC9407DE}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -47,5 +49,17 @@ Global
 		{188F2ECB-D2B2-4597-B1EA-5007340C278F}.Release|x64.Build.0 = Release|Any CPU
 		{188F2ECB-D2B2-4597-B1EA-5007340C278F}.Release|x86.ActiveCfg = Release|Any CPU
 		{188F2ECB-D2B2-4597-B1EA-5007340C278F}.Release|x86.Build.0 = Release|Any CPU
+		{53517CEB-6717-4D82-A08E-8508FC9407DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53517CEB-6717-4D82-A08E-8508FC9407DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53517CEB-6717-4D82-A08E-8508FC9407DE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{53517CEB-6717-4D82-A08E-8508FC9407DE}.Debug|x64.Build.0 = Debug|Any CPU
+		{53517CEB-6717-4D82-A08E-8508FC9407DE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{53517CEB-6717-4D82-A08E-8508FC9407DE}.Debug|x86.Build.0 = Debug|Any CPU
+		{53517CEB-6717-4D82-A08E-8508FC9407DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53517CEB-6717-4D82-A08E-8508FC9407DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53517CEB-6717-4D82-A08E-8508FC9407DE}.Release|x64.ActiveCfg = Release|Any CPU
+		{53517CEB-6717-4D82-A08E-8508FC9407DE}.Release|x64.Build.0 = Release|Any CPU
+		{53517CEB-6717-4D82-A08E-8508FC9407DE}.Release|x86.ActiveCfg = Release|Any CPU
+		{53517CEB-6717-4D82-A08E-8508FC9407DE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
